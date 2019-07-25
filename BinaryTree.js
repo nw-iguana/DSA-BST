@@ -142,55 +142,65 @@ function sameBsts(tree1, tree2) {
     let t1less = []
     let t2greater = []
     let t2less = []
-    let checkGreaterThan
-    let checkLessThan
+
     for (let i = 0; i < tree1.length; i++) {
+      if (tree1[i] === tree1[0]) continue // don't push the root of the tree into either array
       tree1[i] > tree1[0] ? t1greater.push(tree1[i]) : t1less.push(tree1[i])
     }
     for (let j = 0; j < tree2.length; j++) {
+      if (tree2[j] === tree2[0]) continue // don't push the root of the tree into either array
       tree2[j] > tree2[0] ? t2greater.push(tree2[j]) : t2less.push(tree2[j])
     }
+
     console.log('t1greater', t1greater)
     console.log('t2greater', t2greater)
     console.log('t1less', t1less)
     console.log('t2less', t2less)
+    
+    let checkGreaterThan
+    let checkLessThan
 
-    if (t1greater[0] !== t2greater[0] || t1less[1] !== t2less[1]) {
+    if (t1greater[0] !== t2greater[0] || t1less[0] !== t2less[0]) {
+      // if the nodes are different then we can immediately set
+      // check variables to false
       checkGreaterThan = false
       checkLessThan = false
     } else {
-      t1greater = t1greater.slice[1, t1greater.length]
-      t2greater = t2greater.slice[1, t2greater.length]
-      t1less = t1less.slice[2, t1less.length]
-      t12ess = t2less.slice[2, t2less.length]
-    }
+      // the order of the subsequent numbers doesn't matter as long
+      // as the numbers are the same, so first we remove the first value
+      // (the root of each node).
+      // we then sort the arrays so that we can compare if the numbers
+      // in each are the same. this works for checking each node
+      // and its children, so if given a longer array/larger tree,
+      // we would then have to refactor this into a recursive
+      // function that gets called for every node. this means a time
+      // compexity of O(2^n) aka exponential time because each
+      // recursive function call will run through more for loops.
+      t1greater = t1greater.slice(1, t1greater.length).sort()
+      t2greater = t2greater.slice(1, t2greater.length).sort()
+      t1less = t1less.slice(1, t1less.length).sort()
+      t2less = t2less.slice(1, t2less.length).sort()
 
-    // basically introduce recursion to loop this function through
-    // each node in the tree and check if the nodes are the same
-
-    t1greater.sort()
-    t2greater.sort()
-    t1less.sort()
-    t2less.sort()
-
-    console.log('t1greater sorted', t1greater)
-    console.log('t2greater sorted', t2greater)
-    console.log('t1less sorted', t1less)
-    console.log('t2less sorted', t2less)
-
-    for (let k = 0; k < t1greater.length; k++) {
-      let a = t1greater[k]
-      let b = t2greater[k]
-      checkGreaterThan = a !== b ? false : true
-    }
-    for (let k = 0; k < t1less.length; k++) {
-      let a = t1less[k]
-      let b = t2less[k]
-      checkLessThan = a !== b ? false : true
+      console.log('slice & sort t1greater', t1greater)
+      console.log('slice & sort t2greater', t2greater)
+      console.log('slice & sort t1less', t1less)
+      console.log('slice & sort t2less', t2less)
+  
+      for (let k = 0; k < t1greater.length; k++) {
+        let a = t1greater[k]
+        let b = t2greater[k]
+        checkGreaterThan = a !== b ? false : true
+      }
+      for (let k = 0; k < t1less.length; k++) {
+        let a = t1less[k]
+        let b = t2less[k]
+        checkLessThan = a !== b ? false : true
+      }
     }
     
     console.log('checkGreaterThan', checkGreaterThan)
     console.log('checkLessThan', checkLessThan)
+
     return checkGreaterThan === true && checkLessThan === true
   }
 }
@@ -205,5 +215,4 @@ function createTree() {
 
 // console.log(createTree())
 // console.log('balanced BST?', balancedBst(createTree()))
-
 console.log('same BSTs?', sameBsts([3, 5, 4, 6, 1, 0, 2], [3, 1, 5, 2, 4, 6, 0]))
